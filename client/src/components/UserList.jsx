@@ -1,11 +1,10 @@
-// UserList.js
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import Modal from "react-modal";
 import AddUser from "./AddUser";
 import "./UserList.css";
 
-import { saveAs } from "file-saver"; // Import file-saver library
+import { saveAs } from "file-saver";
 
 const UserList = () => {
   const baseUrl = "http://localhost:8000/all";
@@ -15,7 +14,7 @@ const UserList = () => {
   ]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Define showSuccessMessage state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleUserSelection = (userId) => {
     const isSelected = selectedUsers.includes(userId);
@@ -39,24 +38,21 @@ const UserList = () => {
         throw new Error("Failed to delete user.");
       }
 
-      // Update the local user list after successful deletion
       setUsers(users.filter((user) => user._id !== userId));
 
-      // Show the success message
       setShowSuccessMessage(true);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const [isExporting, setIsExporting] = useState(false); // State to track export loading
+  const [isExporting, setIsExporting] = useState(false);
   const exportToCSV = () => {
     if (selectedUsers.length === 0) {
       alert("Please select at least one user to export.");
       return;
     }
 
-    // Create a CSV string from your selected user data
     const csvData = [
       "_id,email,first_name,last_name",
       ...users
@@ -67,10 +63,8 @@ const UserList = () => {
         ),
     ].join("\n");
 
-    // Convert the CSV string to a Blob
     const blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
 
-    // Use the "saveAs" function from the file-saver library to save the Blob as a file
     console.log("CSV Data:", csvData);
     saveAs(blob, "user_data.csv");
   };
@@ -98,7 +92,6 @@ const UserList = () => {
   return (
     <div>
       <div className="header">
-        {/* Open the "Add User" modal */}
         <button onClick={() => setIsAddUserModalOpen(true)}>Sign Up</button>
         <button
           onClick={exportToCSV}
@@ -141,7 +134,6 @@ const UserList = () => {
         </tbody>
       </table>
 
-      {/* Delete User Success Message Modal */}
       <Modal
         isOpen={showSuccessMessage}
         onRequestClose={() => setShowSuccessMessage(false)}
@@ -153,7 +145,6 @@ const UserList = () => {
         <button onClick={() => setShowSuccessMessage(false)}>OK</button>
       </Modal>
 
-      {/* Add User modal */}
       <Modal
         isOpen={isAddUserModalOpen}
         onRequestClose={() => setIsAddUserModalOpen(false)}
@@ -161,13 +152,11 @@ const UserList = () => {
         className="modal"
         overlayClassName="overlay"
       >
-        {/* Render your AddUser component here */}
         <AddUser
           isOpen={isAddUserModalOpen}
           onClose={() => setIsAddUserModalOpen(false)}
           onUserAdded={() => {
             setIsAddUserModalOpen(false);
-            // Handle any additional actions after user is added
           }}
         />
       </Modal>

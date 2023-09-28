@@ -11,25 +11,13 @@ connectDB();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// app.use("/uploads", express.static("uploads"));
 
-//routes
-
-//get all user
 app.get("/", (request, response) => {
   response.json("hello mate!");
 });
 
 app.get("/all", async (req, res) => {
   try {
-    // const category = req.query.category;
-    // //const stars = req.query.stars;
-
-    // const filter = {};
-    // if (category) {
-    //   filter.category = category;
-    // }
-
     const data = await user.find({});
 
     if (!data) {
@@ -46,13 +34,10 @@ app.get("/all", async (req, res) => {
 
 // Add user route
 app.post("/AddUser", async (req, res) => {
-  // Extract user data from the request body
   const userdata = req.body;
 
-  // Create a new user document using the User model
   const newUser = new user(userdata);
-  // console.log(newUser);
-  // console.log(userdata);
+
   try {
     await newUser.save();
     res.status(201).json(newUser);
