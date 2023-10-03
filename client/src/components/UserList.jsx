@@ -25,10 +25,19 @@ const UserList = () => {
     }
   };
 
+  const [deleteUserConfirmation, setDeleteUserConfirmation] = useState(false);
+
+  const [userToDelete, setUserToDetete] = useState(null);
+
   const handleDeleteUser = async (userId) => {
+    setUserToDetete(userId);
+    setDeleteUserConfirmation(true);
+  };
+
+  const confirmDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/deleteUser/${userId}`,
+        `http://localhost:8000/deleteUser/${userToDelete}`,
         {
           method: "DELETE",
         }
@@ -38,7 +47,9 @@ const UserList = () => {
         throw new Error("Failed to delete user.");
       }
 
-      setUsers(users.filter((user) => user._id !== userId));
+      setUsers(users.filter((user) => user._id !== userToDelete));
+
+      setDeleteUserConfirmation(false);
 
       setShowSuccessMessage(true);
     } catch (error) {
@@ -133,6 +144,18 @@ const UserList = () => {
           ))}
         </tbody>
       </table>
+
+      <Modal
+        isOpen={deleteUserConfirmation}
+        onRequestClose={() => setDeleteUserConfirmation(false)}
+        contentLabel="Delete Confirmation"
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <h2>Are you sure you want to delete user?</h2>
+        <button onClick={confirmDelete}>yes</button>
+        <button onClick={() => setDeleteUserConfirmation(false)}>no</button>
+      </Modal>
 
       <Modal
         isOpen={showSuccessMessage}
