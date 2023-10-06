@@ -78,6 +78,7 @@ const UserList = () => {
 
     console.log("CSV Data:", csvData);
     saveAs(blob, "user_data.csv");
+    setIsExporting(false);
   };
 
   useEffect(() => {
