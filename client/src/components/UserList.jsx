@@ -116,6 +116,46 @@ const UserList = () => {
     fetchData();
   }, [users]);
 
+  const [searchInput, setSearchInput] = useState("");
+
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearchInputChange = (e) => {
+    console.log(e.target.value);
+    setSearchInput(e.target.value);
+  };
+  const searchDatabase = async () => {
+    try {
+      // If the search input is empty, reset the search results
+      if (searchInput.trim() === "") {
+        setSearchResults([]);
+        return;
+      }
+
+      const response = await fetch("http://localhost:8000/getSelectedUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ searchUser: searchInput }),
+      });
+
+      if (response.ok) {
+        const jsonData = await response.json();
+        setSearchResults(jsonData);
+      } else {
+        console.error("Error in searching");
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Error in searching", error);
+      setSearchResults([]);
+    }
+  };
+
+  // Render the user list based on search results if there are any, otherwise render all users
+  const userListToRender = searchInput.trim() === "" ? users : searchResults;
+
   return (
     <div>
       <div className="header">
@@ -139,6 +179,17 @@ const UserList = () => {
           <button onClick={() => setShowExportMessage(false)}>OK</button>
         </Modal>
       </div>
+
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={searchInput}
+          onChange={handleSearchInputChange}
+        />
+        <button onClick={searchDatabase}>Search</button>
+      </div>
+
       <table className="user-table">
         <thead>
           <tr>
@@ -150,7 +201,7 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {userListToRender.map((user) => (
             <tr key={user._id}>
               <td>
                 <input

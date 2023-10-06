@@ -14,6 +14,27 @@ const getAllUser = async (req, res) => {
   }
 };
 
+const getSelectedUser = async (req, res) => {
+  try {
+    const searchData = req.body.searchUser; // Extract search keyword from the request body
+    const data = await user.find({
+      $or: [
+        { firstName: { $regex: searchData, $options: "i" } },
+        { lastName: { $regex: searchData, $options: "i" } },
+        { email: { $regex: searchData, $options: "i" } },
+      ],
+    });
+
+    if (!data) {
+      throw new Error("No matching users found.");
+    }
+
+    res.status(201).json(data);
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred while fetching users." });
+  }
+};
+
 const AddUser = async (req, res) => {
   const userdata = req.body;
 
@@ -46,4 +67,5 @@ module.exports = {
   getAllUser,
   AddUser,
   DeleteUser,
+  getSelectedUser,
 };
