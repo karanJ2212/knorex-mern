@@ -8,13 +8,22 @@ import { saveAs } from "file-saver";
 
 const UserList = () => {
   const baseUrl = "http://localhost:8000/all";
+
   const [users, setUsers] = useState([
     { id: 1, firstName: "John", lastName: "Doe", email: "john@example.com" },
     { id: 2, firstName: "Jane", lastName: "Smith", email: "jane@example.com" },
   ]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+
+  //export states
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [showExportMessage, setShowExportMessage] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  //delete states
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [deleteUserConfirmation, setDeleteUserConfirmation] = useState(false);
+  const [userToDelete, setUserToDetete] = useState(null);
 
   const handleUserSelection = (userId) => {
     const isSelected = selectedUsers.includes(userId);
@@ -24,10 +33,6 @@ const UserList = () => {
       setSelectedUsers([...selectedUsers, userId]);
     }
   };
-
-  const [deleteUserConfirmation, setDeleteUserConfirmation] = useState(false);
-
-  const [userToDelete, setUserToDetete] = useState(null);
 
   const handleDeleteUser = async (userId) => {
     setUserToDetete(userId);
@@ -57,28 +62,38 @@ const UserList = () => {
     }
   };
 
-  const [isExporting, setIsExporting] = useState(false);
-  const exportToCSV = () => {
+  const exportToCSV = async () => {
     if (selectedUsers.length === 0) {
       alert("Please select at least one user to export.");
       return;
     }
 
-    const csvData = [
-      "_id,email,first_name,last_name",
-      ...users
-        .filter((user) => selectedUsers.includes(user._id))
-        .map(
-          (user) =>
-            `${user._id},${user.email},${user.firstName},${user.lastName}`
-        ),
-    ].join("\n");
+    try {
+      setIsExporting(true);
 
-    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
+      const csvData = [
+        "_id,email,first_name,last_name",
+        ...users
+          .filter((user) => selectedUsers.includes(user._id))
+          .map(
+            (user) =>
+              `${user._id},${user.email},${user.firstName},${user.lastName}`
+          ),
+      ].join("\n");
 
-    console.log("CSV Data:", csvData);
-    saveAs(blob, "user_data.csv");
-    setIsExporting(false);
+      const blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
+
+      console.log("CSV Data:", csvData);
+      saveAs(blob, "user_data.csv");
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      setIsExporting(false);
+      setShowExportMessage(true);
+    } catch (error) {
+      console.error(error);
+      setIsExporting(false);
+    }
   };
 
   useEffect(() => {
@@ -99,11 +114,12 @@ const UserList = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [users]);
 
   return (
     <div>
       <div className="header">
+        {isExporting && <div className="loading-indicator">Exporting...</div>}
         <button onClick={() => setIsAddUserModalOpen(true)}>Sign Up</button>
         <button
           onClick={exportToCSV}
@@ -111,7 +127,17 @@ const UserList = () => {
         >
           EXPORT
         </button>
-        {isExporting && <div className="loading-indicator">Exporting...</div>}
+
+        <Modal
+          isOpen={showExportMessage}
+          onRequestClose={() => setShowExportMessage(false)}
+          contentLabel="User Exported Successfully"
+          className="modal"
+          overlayClassName="overlay"
+        >
+          <h2>Data Exported Successfully</h2>
+          <button onClick={() => setShowExportMessage(false)}>OK</button>
+        </Modal>
       </div>
       <table className="user-table">
         <thead>

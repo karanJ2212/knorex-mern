@@ -24,12 +24,16 @@
 }
 
 button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
+  /* background-color: #007bff; */
+
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 4px;
+}
+
+button:disabled {
+  background-color: grey;
+  color: #ddd;
 }
 
 button:hover {
