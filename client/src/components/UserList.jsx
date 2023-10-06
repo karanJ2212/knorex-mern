@@ -114,7 +114,7 @@ const UserList = () => {
       }
     };
     fetchData();
-  }, [users]);
+  }, []);
 
   const [searchInput, setSearchInput] = useState("");
 
@@ -202,7 +202,7 @@ const UserList = () => {
         </thead>
         <tbody>
           {userListToRender.map((user) => (
-            <tr key={user._id}>
+            <tr key={`${user.id}-${Math.random()}`}>
               <td>
                 <input
                   type="checkbox"

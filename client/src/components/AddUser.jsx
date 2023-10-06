@@ -38,9 +38,9 @@ const AddUser = ({ isOpen, onClose, onUserAdded }) => {
           password: "",
         });
 
-        // Notify the parent component that a user has been added and close the modal
         onUserAdded();
         onClose();
+        window.location.reload();
       } else {
         const errorData = await response.json(); // Parse error response from the server
         setError(errorData.message); // Set the error message in state
