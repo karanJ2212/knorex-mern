@@ -38,7 +38,6 @@ const AddUser = ({ isOpen, onClose, onUserAdded }) => {
           password: "",
         });
 
-        // Notify the parent component that a user has been added and close the modal
         onUserAdded();
         onClose();
         window.location.reload();

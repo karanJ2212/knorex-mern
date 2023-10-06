@@ -18,19 +18,24 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 20px;
+  gap: 10px;
 }
 
-.button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
+button {
+  /* background-color: #007bff; */
+
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 4px;
 }
 
-.button:hover {
+button:disabled {
+  background-color: grey;
+  color: #ddd;
+}
+
+button:hover {
   background-color: #0056b3;
 }
